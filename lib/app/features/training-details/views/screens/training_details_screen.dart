@@ -1,4 +1,4 @@
-library dashboard;
+library training;
 
 import 'dart:developer';
 
@@ -22,10 +22,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:badges/badges.dart' as badges;
 
 // binding
-part '../../bindings/dashboard_binding.dart';
+part '../../bindings/training_detail_binding.dart';
 
 // controller
-part '../../controllers/dashboard_controller.dart';
+part '../../controllers/training_details_controller.dart';
 
 // models
 part '../../models/profile.dart';
@@ -39,8 +39,8 @@ part '../components/recent_messages.dart';
 part '../components/sidebar.dart';
 part '../components/team_member.dart';
 
-class DashboardScreen extends GetView<DashboardController> {
-  const DashboardScreen({Key? key}) : super(key: key);
+class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
+  const TrainingDetailsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

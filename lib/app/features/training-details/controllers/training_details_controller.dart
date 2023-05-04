@@ -1,6 +1,6 @@
-part of dashboard;
+part of training;
 
-class DashboardController extends GetxController {
+class TrainingDetailsController extends GetxController {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
