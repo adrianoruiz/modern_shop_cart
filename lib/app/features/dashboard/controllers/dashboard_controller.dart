@@ -22,6 +22,7 @@ class DashboardController extends GetxController {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final snapshot = await _firestore.collection('epiwxnqg3s5h').get();
     final data = snapshot.docs.map((doc) {
+      print("#####");
       final docData = doc.data();
       return TaskCardData(
           title: docData['title'],
@@ -29,52 +30,9 @@ class DashboardController extends GetxController {
           totalComments: docData['totalComments'],
           totalContributors: docData['totalContributors']);
     }).toList();
+    print(data);
     return data;
   }
-
-  // List<TaskCardData> getAllTask() {
-  //   return [
-  //     const TaskCardData(
-  //       title: "Landing page UI Design",
-  //       dueDay: 2,
-  //       totalComments: 50,
-  //       type: TaskType.todo,
-  //       totalContributors: 30,
-  //       profilContributors: [
-  //         AssetImage(ImageRasterPath.avatar1),
-  //         AssetImage(ImageRasterPath.avatar2),
-  //         AssetImage(ImageRasterPath.avatar3),
-  //         AssetImage(ImageRasterPath.avatar4),
-  //       ],
-  //     ),
-  //     const TaskCardData(
-  //       title: "Landing page UI Design",
-  //       dueDay: -1,
-  //       totalComments: 50,
-  //       totalContributors: 34,
-  //       type: TaskType.inProgress,
-  //       profilContributors: [
-  //         AssetImage(ImageRasterPath.avatar5),
-  //         AssetImage(ImageRasterPath.avatar6),
-  //         AssetImage(ImageRasterPath.avatar7),
-  //         AssetImage(ImageRasterPath.avatar8),
-  //       ],
-  //     ),
-  //     const TaskCardData(
-  //       title: "Landing page UI Design",
-  //       dueDay: 1,
-  //       totalComments: 50,
-  //       totalContributors: 34,
-  //       type: TaskType.done,
-  //       profilContributors: [
-  //         AssetImage(ImageRasterPath.avatar5),
-  //         AssetImage(ImageRasterPath.avatar3),
-  //         AssetImage(ImageRasterPath.avatar4),
-  //         AssetImage(ImageRasterPath.avatar2),
-  //       ],
-  //     ),
-  //   ];
-  // }
 
   ProjectCardData getSelectedProject() {
     return ProjectCardData(
