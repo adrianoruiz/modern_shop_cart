@@ -7,9 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:project_management/app/constans/app_constants.dart';
 import 'package:project_management/app/shared_components/chatting_card.dart';
-import 'package:project_management/app/shared_components/list_profil_image.dart';
-import 'package:project_management/app/shared_components/progress_card.dart';
-import 'package:project_management/app/shared_components/progress_report_card.dart';
 import 'package:project_management/app/shared_components/responsive_builder.dart';
 import 'package:project_management/app/shared_components/project_card.dart';
 import 'package:project_management/app/shared_components/search_field.dart';
@@ -21,6 +18,8 @@ import 'package:project_management/app/utils/helpers/app_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'package:badges/badges.dart' as badges;
 
 // binding
 part '../../bindings/dashboard_binding.dart';

@@ -25,10 +25,12 @@ class _ProfilTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: IconButton(
-        onPressed: onPressedNotification,
-        icon: const Icon(EvaIcons.bellOutline),
-        tooltip: "notification",
+      trailing: badges.Badge(
+        badgeContent: const Text("3"),
+        child: IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.shopping_cart),
+        ),
       ),
     );
   }
