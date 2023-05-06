@@ -12,24 +12,52 @@ class DashboardController extends GetxController {
   }
 
   // Data
-  _Profile getProfil() {
-    return const _Profile(
-      photo: AssetImage(ImageRasterPath.avatar1),
-      name: "Spartan",
-      email: "flutterwithgia@gmail.com",
-    );
+  Future<ProfileModel> _getProfile() async {
+    // Get a reference to the profiles collection
+    CollectionReference profiles =
+        FirebaseFirestore.instance.collection('profiles');
+
+    // Retrieve the profile document
+    QuerySnapshot snapshot = await profiles.get();
+
+    // Get the first (and only) document in the snapshot
+    DocumentSnapshot profileDoc = snapshot.docs[0];
+
+    print("##### ${profileDoc.get("name")}");
+    print("##### ${profileDoc.get("email")}");
+    print("##### ${profileDoc.get("inBasket.trainings")}");
+
+    return ProfileModel(
+        // photo: AssetImage(ImageRasterPath.avatar1),
+        name: profileDoc.get("name"),
+        email: profileDoc.get("email"),
+        trainings: profileDoc.get('inBasket.trainings'));
+
+    // return const ProfileModel(
+    //     // photo: AssetImage(ImageRasterPath.avatar1),
+    //     name: "Spartaz",
+    //     email: "flutterwithgia@gmail.com",
+    //     trainings: ["", "", "", "", "", ""]);
   }
 
-  Future<List<TaskCardData>> _getTaskData() async {
-    final snapshot = await _firestore.collection('epiwxnqg3s5h').get();
+  Future<List<TrainingModel>> _getTrainingData() async {
+    final snapshot = await _firestore.collection('Trainings').get();
     final data = snapshot.docs.map((doc) {
       print("#####");
       final docData = doc.data();
-      return TaskCardData(
-          title: docData['title'],
-          subTitle: docData['subTitle'],
-          totalComments: docData['totalComments'],
-          totalContributors: docData['totalContributors']);
+      return TrainingModel(
+        id: doc.id,
+        title: docData['title'],
+        description: docData['description'],
+        categories: List<String>.from(docData['categories']),
+        author: docData['author'],
+        duration: docData['duration'],
+        price: docData['price'],
+        trailerVid: docData['trailerVid'],
+        image: docData['image'],
+        tags: List<String>.from(docData['tags']),
+        creationDate: docData['creationDate'],
+      );
     }).toList();
     print(data);
     return data;

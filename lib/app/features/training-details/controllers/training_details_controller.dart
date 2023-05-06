@@ -12,27 +12,78 @@ class TrainingDetailsController extends GetxController {
   }
 
   // Data
-  _Profile getProfil() {
-    return const _Profile(
-      photo: AssetImage(ImageRasterPath.avatar1),
-      name: "Spartan",
-      email: "flutterwithgia@gmail.com",
-    );
+  Future<ProfileModel> _getProfil() async {
+    // Get a reference to the profiles collection
+    CollectionReference profiles =
+        FirebaseFirestore.instance.collection('profiles');
+
+    // Retrieve the profile document
+    QuerySnapshot snapshot = await profiles.get();
+
+    // Get the first (and only) document in the snapshot
+    DocumentSnapshot profileDoc = snapshot.docs[0];
+
+    print("##### ${profileDoc.get("name")}");
+    print("##### ${profileDoc.get("email")}");
+    print("##### ${profileDoc.get("inBasket.trainings")}");
+
+    return ProfileModel(
+        // photo: AssetImage(ImageRasterPath.avatar1),
+        name: profileDoc.get("name"),
+        email: profileDoc.get("email"),
+        trainings: profileDoc.get('inBasket.trainings'));
+
+    // return const ProfileModel(
+    //     // photo: AssetImage(ImageRasterPath.avatar1),
+    //     name: "Spartaz",
+    //     email: "flutterwithgia@gmail.com",
+    //     trainings: ["", "", "", "", "", ""]);
   }
 
-  Future<List<TaskCardData>> _getTaskData() async {
-    final snapshot = await _firestore.collection('epiwxnqg3s5h').get();
-    final data = snapshot.docs.map((doc) {
-      print("#####");
-      final docData = doc.data();
-      return TaskCardData(
-          title: docData['title'],
-          subTitle: docData['subTitle'],
-          totalComments: docData['totalComments'],
-          totalContributors: docData['totalContributors']);
-    }).toList();
-    print(data);
-    return data;
+  // _addTrainingToBasket(price, id) async {
+  //   // Get a reference to the profiles collection
+  //   CollectionReference profiles =
+  //       FirebaseFirestore.instance.collection('profiles');
+
+  //   // Update the document based on the provided ID
+  //   DocumentReference documentRef = profiles.doc("JGCRmxK2Jy3mEruvktsr");
+
+  //   // Retrieve the existing document snapshot
+  //   DocumentSnapshot snapshot = await documentRef.get();
+
+  //   if (snapshot.exists) {
+  //     // Get the current values of totalPrice and trainings from the snapshot
+  //     double currentTotalPrice = snapshot.get('inBasket.totalPrice');
+  //     List<dynamic> currentTrainings = snapshot.get('inBasket.trainings');
+
+  //     // Update the totalPrice and trainings array with the new values
+  //     double updatedTotalPrice = currentTotalPrice + price;
+  //     List<dynamic> updatedTrainings = List.from(currentTrainings)..add(id);
+
+  //     // Update the document with the new values
+  //     await documentRef.update({
+  //       'inBasket.totalPrice': updatedTotalPrice,
+  //       'inBasket.trainings': updatedTrainings,
+  //     });
+  //   }
+  // }
+
+  TrainingModel _getTrainingDetails() {
+    final arguments = Get.arguments;
+    final TrainingModel training = (arguments == null)
+        ? TrainingModel(
+            id: "id",
+            title: "title",
+            description: "description",
+            categories: ["categories"],
+            author: "author",
+            duration: "duration",
+            price: 0.0,
+            trailerVid: "trailerVid",
+            image: "image",
+            creationDate: Timestamp(100, 999))
+        : arguments['trainingData'];
+    return training;
   }
 
   ProjectCardData getSelectedProject() {

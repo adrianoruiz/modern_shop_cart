@@ -3,38 +3,34 @@ library training;
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:project_management/app/config/models/profile_model.dart';
+import 'package:project_management/app/config/models/training_model.dart';
 import 'package:project_management/app/constans/app_constants.dart';
 import 'package:project_management/app/shared_components/chatting_card.dart';
+import 'package:project_management/app/shared_components/profile_tile.dart';
 import 'package:project_management/app/shared_components/responsive_builder.dart';
 import 'package:project_management/app/shared_components/project_card.dart';
 import 'package:project_management/app/shared_components/search_field.dart';
 import 'package:project_management/app/shared_components/selection_button.dart';
-import 'package:project_management/app/shared_components/task_card.dart';
 import 'package:project_management/app/shared_components/today_text.dart';
+import 'package:project_management/app/shared_components/training_details_card.dart';
 import 'package:project_management/app/utils/helpers/app_helpers.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'package:badges/badges.dart' as badges;
-
 // binding
-part '../../bindings/training_detail_binding.dart';
+part '../../bindings/training_details_binding.dart';
 
 // controller
 part '../../controllers/training_details_controller.dart';
-
-// models
-part '../../models/profile.dart';
 
 // component
 part '../components/active_project_card.dart';
 part '../components/header.dart';
 part '../components/overview_header.dart';
-part '../components/profile_tile.dart';
 part '../components/recent_messages.dart';
 part '../components/sidebar.dart';
 part '../components/team_member.dart';
@@ -62,14 +58,10 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
             _buildHeader(onPressedMenu: () => controller.openDrawer()),
             const SizedBox(height: kSpacing / 2),
             const Divider(),
-            _buildProfile(data: controller.getProfil()),
-            const SizedBox(height: kSpacing),
-            _buildTaskOverview(
-              headerAxis: Axis.vertical,
-              crossAxisCount: 6,
-              crossAxisCellCount: 6,
-            ),
+            _buildProfile(),
             const SizedBox(height: kSpacing * 2),
+            _buildTrainingCard(axis: Axis.vertical),
+            const SizedBox(height: kSpacing)
           ]);
         },
         tabletBuilder: (context, constraints) {
@@ -82,19 +74,6 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
                   children: [
                     const SizedBox(height: kSpacing * (kIsWeb ? 1 : 2)),
                     _buildHeader(onPressedMenu: () => controller.openDrawer()),
-                    const SizedBox(height: kSpacing * 2),
-                    _buildTaskOverview(
-                      headerAxis: (constraints.maxWidth < 850)
-                          ? Axis.vertical
-                          : Axis.horizontal,
-                      crossAxisCount: 6,
-                      crossAxisCellCount: (constraints.maxWidth < 950)
-                          ? 6
-                          : (constraints.maxWidth < 1100)
-                              ? 3
-                              : 2,
-                    ),
-                    const SizedBox(height: kSpacing * 2),
                   ],
                 ),
               ),
@@ -103,7 +82,7 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
                 child: Column(
                   children: [
                     const SizedBox(height: kSpacing * (kIsWeb ? 0.5 : 1.5)),
-                    _buildProfile(data: controller.getProfil()),
+                    _buildProfile(),
                     const Divider(thickness: 1),
                     const SizedBox(height: kSpacing),
                   ],
@@ -116,26 +95,21 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Flexible(
-              //   flex: (constraints.maxWidth < 1360) ? 4 : 3,
-              //   child: ClipRRect(
-              //       borderRadius: const BorderRadius.only(
-              //         topRight: Radius.circular(kBorderRadius),
-              //         bottomRight: Radius.circular(kBorderRadius),
-              //       ),
-              //       child: _Sidebar(data: controller.getSelectedProject())),
-              // ),
+              Flexible(
+                flex: (constraints.maxWidth < 1360) ? 4 : 3,
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(kBorderRadius),
+                      bottomRight: Radius.circular(kBorderRadius),
+                    ),
+                    child: _Sidebar(data: controller.getSelectedProject())),
+              ),
               Flexible(
                 flex: 9,
                 child: Column(
                   children: [
                     const SizedBox(height: kSpacing),
                     _buildHeader(),
-                    const SizedBox(height: kSpacing * 2),
-                    _buildTaskOverview(
-                      crossAxisCount: 6,
-                      crossAxisCellCount: (constraints.maxWidth < 1360) ? 3 : 2,
-                    ),
                   ],
                 ),
               ),
@@ -144,7 +118,7 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
                 child: Column(
                   children: [
                     const SizedBox(height: kSpacing / 2),
-                    _buildProfile(data: controller.getProfil()),
+                    // _buildProfile(data: controller.getProfil()),
                     const Divider(thickness: 1),
                     const SizedBox(height: kSpacing),
                   ],
@@ -177,57 +151,42 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
     );
   }
 
-  Widget _buildTaskOverview({
-    int crossAxisCount = 6,
-    int crossAxisCellCount = 2,
-    Axis headerAxis = Axis.horizontal,
-  }) {
-    return FutureBuilder<List<TaskCardData>>(
-      future: controller._getTaskData(),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<TaskCardData>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final taskData = snapshot.data!;
-
-            return StaggeredGridView.countBuilder(
-              crossAxisCount: crossAxisCount,
-              itemCount: taskData.length,
-              addAutomaticKeepAlives: false,
-              padding: const EdgeInsets.symmetric(horizontal: kSpacing),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final data = taskData[index];
-
-                return TaskCard(
-                  data: data,
-                  onPressedMore: () {},
-                  onPressedTask: () {},
-                  onPressedContributors: () {},
-                  onPressedComments: () {},
-                );
-              },
-              staggeredTileBuilder: (int index) =>
-                  StaggeredTile.fit(crossAxisCellCount),
-            );
-          }
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
+  Widget _buildTrainingCard({Axis axis = Axis.horizontal}) {
+    final trainingData = controller._getTrainingDetails();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kSpacing),
+      child: (axis == Axis.horizontal)
+          ? Row(
+              children: [
+                Flexible(
+                  flex: 9,
+                  child: TrainingDetailsCard(
+                    data: trainingData,
+                  ),
+                )
+              ],
+            )
+          : Column(
+              children: [
+                TrainingDetailsCard(
+                  data: trainingData,
+                )
+              ],
+            ),
     );
   }
 
-  Widget _buildProfile({required _Profile data}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kSpacing),
-      child: _ProfilTile(
-        data: data,
-        onPressedNotification: () {},
-      ),
-    );
+  Widget _buildProfile() {
+    return FutureBuilder(
+        future: controller._getProfile(),
+        builder: (BuildContext context, AsyncSnapshot<ProfileModel> snapshot) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kSpacing),
+            child: ProfilTile(
+              data: snapshot.data!,
+              onPressedNotification: () {},
+            ),
+          );
+        });
   }
 }

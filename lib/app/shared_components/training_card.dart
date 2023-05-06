@@ -1,15 +1,16 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project_management/app/config/models/training_model.dart';
 import 'package:project_management/app/constans/app_constants.dart';
 
-class TaskCardData {
+class TrainingCardData {
   final String title;
   final String subTitle;
   final int totalComments;
   final int totalContributors;
 
-  const TaskCardData({
+  const TrainingCardData({
     required this.title,
     required this.subTitle,
     required this.totalComments,
@@ -17,8 +18,8 @@ class TaskCardData {
   });
 }
 
-class TaskCard extends StatelessWidget {
-  const TaskCard({
+class TrainingCard extends StatelessWidget {
+  const TrainingCard({
     required this.data,
     required this.onPressedMore,
     required this.onPressedTask,
@@ -27,7 +28,7 @@ class TaskCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final TaskCardData data;
+  final TrainingModel data;
 
   final Function() onPressedMore;
   final Function() onPressedTask;
@@ -49,7 +50,8 @@ class TaskCard extends StatelessWidget {
               padding: const EdgeInsets.all(5),
               child: _Tile(
                 title: data.title,
-                subtitle: data.subTitle,
+                category: data.categories,
+                duration: data.duration,
                 onPressedMore: onPressedMore,
               ),
             ),
@@ -72,25 +74,25 @@ class TaskCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: kSpacing / 2),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kSpacing / 2),
-              child: Row(
-                children: [
-                  _IconButton(
-                    iconData: EvaIcons.messageCircleOutline,
-                    onPressed: onPressedComments,
-                    totalContributors: data.totalComments,
-                  ),
-                  const SizedBox(width: kSpacing / 2),
-                  _IconButton(
-                    iconData: EvaIcons.peopleOutline,
-                    onPressed: onPressedContributors,
-                    totalContributors: data.totalContributors,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: kSpacing / 2),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: kSpacing / 2),
+            //   child: Row(
+            //     children: [
+            //       _IconButton(
+            //         iconData: EvaIcons.messageCircleOutline,
+            //         onPressed: onPressedComments,
+            //         totalContributors: data.totalComments,
+            //       ),
+            //       const SizedBox(width: kSpacing / 2),
+            //       _IconButton(
+            //         iconData: EvaIcons.peopleOutline,
+            //         onPressed: onPressedContributors,
+            //         totalContributors: data.totalContributors,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: kSpacing / 2),
           ],
         ),
       ),
@@ -102,13 +104,16 @@ class TaskCard extends StatelessWidget {
 class _Tile extends StatelessWidget {
   const _Tile({
     required this.title,
-    required this.subtitle,
+    required this.category,
+    required this.duration,
     required this.onPressedMore,
     Key? key,
   }) : super(key: key);
 
   final String title;
-  final String subtitle;
+  final List<String> category;
+  final String duration;
+
   final Function() onPressedMore;
 
   @override
@@ -132,7 +137,7 @@ class _Tile extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _subtitle(subtitle),
+          child: _subtitle(category.join(" - ")),
         ),
         const SizedBox(height: 12),
       ],

@@ -1,4 +1,4 @@
-part of dashboard;
+part of training;
 
 class _RecentMessages extends StatelessWidget {
   const _RecentMessages({

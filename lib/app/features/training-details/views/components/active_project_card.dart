@@ -1,4 +1,4 @@
-part of dashboard;
+part of training;
 
 class _ActiveProjectCard extends StatelessWidget {
   const _ActiveProjectCard({

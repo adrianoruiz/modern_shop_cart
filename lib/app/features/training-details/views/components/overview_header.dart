@@ -1,4 +1,4 @@
-part of dashboard;
+part of training;
 
 class _OverviewHeader extends StatelessWidget {
   const _OverviewHeader({

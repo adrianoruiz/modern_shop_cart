@@ -1,4 +1,4 @@
-part of dashboard;
+part of training;
 
 class _Sidebar extends StatelessWidget {
   const _Sidebar({
