@@ -12,7 +12,7 @@ class TrainingDetailsController extends GetxController {
   }
 
   // Data
-  Future<ProfileModel> _getProfil() async {
+  Future<ProfileModel> _getProfile() async {
     // Get a reference to the profiles collection
     CollectionReference profiles =
         FirebaseFirestore.instance.collection('profiles');

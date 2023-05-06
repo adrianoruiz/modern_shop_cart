@@ -26,12 +26,14 @@ class DashboardController extends GetxController {
     print("##### ${profileDoc.get("name")}");
     print("##### ${profileDoc.get("email")}");
     print("##### ${profileDoc.get("inBasket.trainings")}");
+    print("##### ${profileDoc.get('inBasket.totalPrice')}");
 
     return ProfileModel(
         // photo: AssetImage(ImageRasterPath.avatar1),
         name: profileDoc.get("name"),
         email: profileDoc.get("email"),
-        trainings: profileDoc.get('inBasket.trainings'));
+        trainings: profileDoc.get('inBasket.trainings'),
+        totalPrice: profileDoc.get('inBasket.totalPrice'));
 
     // return const ProfileModel(
     //     // photo: AssetImage(ImageRasterPath.avatar1),

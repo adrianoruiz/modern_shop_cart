@@ -226,16 +226,26 @@ class DashboardScreen extends GetView<DashboardController> {
   }
 
   Widget _buildProfile() {
-    return FutureBuilder(
-        future: controller._getProfile(),
-        builder: (BuildContext context, AsyncSnapshot<ProfileModel> snapshot) {
+    return FutureBuilder<ProfileModel>(
+      future: controller._getProfile(),
+      builder: (BuildContext context, AsyncSnapshot<ProfileModel> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While waiting for the future to complete, show a loading indicator
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // If an error occurred, show an error message
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          // If data is available, display the profile tile using the retrieved data
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: kSpacing),
-            child: ProfilTile(
-              data: snapshot.data!,
-              onPressedNotification: () {},
-            ),
+            child: ProfilTile(data: snapshot.data!),
           );
-        });
+        } else {
+          // Handle other cases, such as when the snapshot is null or no data is available
+          return Text('No data available');
+        }
+      },
+    );
   }
 }
