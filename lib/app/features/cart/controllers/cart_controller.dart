@@ -1,6 +1,6 @@
-part of training;
+part of cart;
 
-class TrainingDetailsController extends GetxController {
+class CartController extends GetxController {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -21,33 +21,7 @@ class TrainingDetailsController extends GetxController {
     return snapshot;
   }
 
-  // _addTrainingToBasket(price, id) async {
-  //   // Get a reference to the profiles collection
-  //   CollectionReference profiles =
-  //       FirebaseFirestore.instance.collection('profiles');
-
-  //   // Update the document based on the provided ID
-  //   DocumentReference documentRef = profiles.doc("JGCRmxK2Jy3mEruvktsr");
-
-  //   // Retrieve the existing document snapshot
-  //   DocumentSnapshot snapshot = await documentRef.get();
-
-  //   if (snapshot.exists) {
-  //     // Get the current values of totalPrice and trainings from the snapshot
-  //     double currentTotalPrice = snapshot.get('inBasket.totalPrice');
-  //     List<dynamic> currentTrainings = snapshot.get('inBasket.trainings');
-
-  //     // Update the totalPrice and trainings array with the new values
-  //     double updatedTotalPrice = currentTotalPrice + price;
-  //     List<dynamic> updatedTrainings = List.from(currentTrainings)..add(id);
-
-  //     // Update the document with the new values
-  //     await documentRef.update({
-  //       'inBasket.totalPrice': updatedTotalPrice,
-  //       'inBasket.trainings': updatedTrainings,
-  //     });
-  //   }
-  // }
+  _getTrainingFromCart() {}
 
   TrainingModel _getTrainingDetails() {
     final arguments = Get.arguments;

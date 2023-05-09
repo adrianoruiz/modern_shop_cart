@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:project_management/app/config/models/profile_model.dart';
 import 'package:project_management/app/config/models/training_model.dart';
+import 'package:project_management/app/config/routes/app_pages.dart';
 import 'package:project_management/app/constans/app_constants.dart';
 import 'package:project_management/app/shared_components/chatting_card.dart';
 import 'package:project_management/app/shared_components/profile_tile.dart';
@@ -74,6 +75,8 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
                   children: [
                     const SizedBox(height: kSpacing * (kIsWeb ? 1 : 2)),
                     _buildHeader(onPressedMenu: () => controller.openDrawer()),
+                    const SizedBox(height: kSpacing),
+                    _buildTrainingCard(),
                   ],
                 ),
               ),
@@ -110,6 +113,8 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
                   children: [
                     const SizedBox(height: kSpacing),
                     _buildHeader(),
+                    const SizedBox(height: kSpacing),
+                    _buildTrainingCard(),
                   ],
                 ),
               ),
@@ -177,24 +182,49 @@ class TrainingDetailsScreen extends GetView<TrainingDetailsController> {
   }
 
   Widget _buildProfile() {
-    return FutureBuilder<ProfileModel>(
-      future: controller._getProfile(),
-      builder: (BuildContext context, AsyncSnapshot<ProfileModel> snapshot) {
+    return StreamBuilder<QuerySnapshot<Object?>>(
+      stream: controller._getProfile(),
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // While waiting for the future to complete, show a loading indicator
-          return CircularProgressIndicator();
+          // Stream is still loading, show a loading indicator
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          // If an error occurred, show an error message
+          // Error occurred while fetching the data
           return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          // If data is available, display the profile tile using the retrieved data
+        } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          // No data found
+          return const Text('No profile documents found');
+        } else {
+          // Data has been successfully received
+          List<ProfileModel> profiles = [];
+
+          for (var doc in snapshot.data!.docs) {
+            // Access the fields of the document
+            var name = (doc.data()! as Map)['name'];
+            var email = (doc.data()! as Map)['email'];
+            var trainings = (doc.data()! as Map)['inBasket']['trainings'];
+            var totalPrice = (doc.data()! as Map)['inBasket']['totalPrice'];
+
+            // Create a ProfileModel instance using the retrieved fields
+            var profileModel = ProfileModel(
+              name: name,
+              email: email,
+              trainings: trainings,
+              totalPrice: totalPrice,
+            );
+
+            // Add the profileModel to the list
+            profiles.add(profileModel);
+          }
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: kSpacing),
-            child: ProfilTile(data: snapshot.data!),
+            child: ProfilTile(
+                data: profiles[0],
+                onPressed: () {
+                  Get.toNamed(AppPages.cart);
+                }),
           );
-        } else {
-          // Handle other cases, such as when the snapshot is null or no data is available
-          return Text('No data available');
         }
       },
     );

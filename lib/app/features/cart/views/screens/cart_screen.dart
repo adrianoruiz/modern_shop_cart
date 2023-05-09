@@ -1,47 +1,46 @@
-library dashboard;
+library cart;
 
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:project_management/app/config/models/profile_model.dart';
 import 'package:project_management/app/config/models/training_model.dart';
 import 'package:project_management/app/config/routes/app_pages.dart';
 import 'package:project_management/app/constans/app_constants.dart';
+import 'package:project_management/app/shared_components/cart_training_card.dart';
 import 'package:project_management/app/shared_components/chatting_card.dart';
+import 'package:project_management/app/shared_components/profile_tile.dart';
 import 'package:project_management/app/shared_components/responsive_builder.dart';
 import 'package:project_management/app/shared_components/project_card.dart';
 import 'package:project_management/app/shared_components/search_field.dart';
 import 'package:project_management/app/shared_components/selection_button.dart';
-import 'package:project_management/app/shared_components/training_card.dart';
 import 'package:project_management/app/shared_components/today_text.dart';
+import 'package:project_management/app/shared_components/training_card.dart';
+import 'package:project_management/app/shared_components/training_details_card.dart';
 import 'package:project_management/app/utils/helpers/app_helpers.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../../../../shared_components/profile_tile.dart';
-
-// models
-import '../../../../config/models/profile_model.dart';
 
 // binding
-part '../../bindings/dashboard_binding.dart';
+part '../../bindings/cart_details_binding.dart';
 
 // controller
-part '../../controllers/dashboard_controller.dart';
+part '../../controllers/cart_controller.dart';
 
 // component
 part '../components/active_project_card.dart';
 part '../components/header.dart';
 part '../components/overview_header.dart';
-
 part '../components/recent_messages.dart';
 part '../components/sidebar.dart';
 part '../components/team_member.dart';
 
-class DashboardScreen extends GetView<DashboardController> {
-  const DashboardScreen({Key? key}) : super(key: key);
+class CartScreen extends GetView<CartController> {
+  const CartScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +63,9 @@ class DashboardScreen extends GetView<DashboardController> {
             const SizedBox(height: kSpacing / 2),
             const Divider(),
             _buildProfile(),
-            const SizedBox(height: kSpacing),
-            _buildTrainingOverview(
-              headerAxis: Axis.vertical,
-              crossAxisCount: 6,
-              crossAxisCellCount: 6,
-            ),
             const SizedBox(height: kSpacing * 2),
+            _buildCartTrainings(),
+            const SizedBox(height: kSpacing)
           ]);
         },
         tabletBuilder: (context, constraints) {
@@ -83,19 +78,8 @@ class DashboardScreen extends GetView<DashboardController> {
                   children: [
                     const SizedBox(height: kSpacing * (kIsWeb ? 1 : 2)),
                     _buildHeader(onPressedMenu: () => controller.openDrawer()),
-                    const SizedBox(height: kSpacing * 2),
-                    _buildTrainingOverview(
-                      headerAxis: (constraints.maxWidth < 850)
-                          ? Axis.vertical
-                          : Axis.horizontal,
-                      crossAxisCount: 6,
-                      crossAxisCellCount: (constraints.maxWidth < 950)
-                          ? 6
-                          : (constraints.maxWidth < 1100)
-                              ? 3
-                              : 2,
-                    ),
-                    const SizedBox(height: kSpacing * 2),
+                    const SizedBox(height: kSpacing),
+                    _buildCartTrainings(),
                   ],
                 ),
               ),
@@ -132,11 +116,8 @@ class DashboardScreen extends GetView<DashboardController> {
                   children: [
                     const SizedBox(height: kSpacing),
                     _buildHeader(),
-                    const SizedBox(height: kSpacing * 2),
-                    _buildTrainingOverview(
-                      crossAxisCount: 6,
-                      crossAxisCellCount: (constraints.maxWidth < 1360) ? 3 : 2,
-                    ),
+                    const SizedBox(height: kSpacing),
+                    _buildCartTrainings(),
                   ],
                 ),
               ),
@@ -178,37 +159,34 @@ class DashboardScreen extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildTrainingOverview({
+  Widget _buildCartTrainings({
     int crossAxisCount = 6,
     int crossAxisCellCount = 2,
-    Axis headerAxis = Axis.horizontal,
+    // Axis headerAxis = Axis.horizontal,
   }) {
     return FutureBuilder<List<TrainingModel>>(
-      future: controller._getTrainingData(),
+      future: controller._getTrainingFromCart(),
       builder:
           (BuildContext context, AsyncSnapshot<List<TrainingModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            final trainingData = snapshot.data!;
+            final trainings = snapshot.data!;
 
             return StaggeredGridView.countBuilder(
               crossAxisCount: crossAxisCount,
-              itemCount: trainingData.length,
+              itemCount: trainings.length,
               addAutomaticKeepAlives: false,
               padding: const EdgeInsets.symmetric(horizontal: kSpacing),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                final data = trainingData[index];
+                final data = trainings[index];
 
-                return TrainingCard(
+                return CartTrainingCard(
                   data: data,
-                  onPressedMore: () {
-                    Get.toNamed(AppPages.trainingDetails,
-                        arguments: {'trainingData': data});
-                  },
+                  onPressedMore: () {},
                   onPressedTask: () {},
                   onPressedContributors: () {},
                   onPressedComments: () {},
@@ -264,11 +242,10 @@ class DashboardScreen extends GetView<DashboardController> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: kSpacing),
             child: ProfilTile(
-              data: profiles[0],
-              onPressed: () {
-                Get.toNamed(AppPages.cart);
-              },
-            ),
+                data: profiles[0],
+                onPressed: () {
+                  Get.toNamed(AppPages.cart);
+                }),
           );
         }
       },

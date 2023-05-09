@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:project_management/app/config/models/training_model.dart';
 import 'package:project_management/app/constans/app_constants.dart';
 
-class TrainingCard extends StatelessWidget {
-  const TrainingCard({
+class CartTrainingCard extends StatelessWidget {
+  const CartTrainingCard({
     required this.data,
     required this.onPressedMore,
     required this.onPressedTask,

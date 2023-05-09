@@ -10,12 +10,13 @@ class AppTheme {
         primaryColor: const Color.fromRGBO(128, 109, 255, 1),
         primaryColorLight: const Color.fromRGBO(159, 84, 252, 1),
         brightness: Brightness.dark,
-        primaryColorBrightness: Brightness.dark,
+        // primaryColorBrightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-          primary: const Color.fromRGBO(128, 109, 255, 1),
-        ).merge(
+                    // primary: const Color.fromRGBO(128, 109, 255, 1),
+                    )
+                .merge(
           ButtonStyle(elevation: MaterialStateProperty.all(0)),
         )),
         canvasColor: const Color.fromRGBO(31, 29, 44, 1),

@@ -11,39 +11,18 @@ class DashboardController extends GetxController {
     }
   }
 
-  // Data
-  Future<ProfileModel> _getProfile() async {
+  Stream<QuerySnapshot<Object?>> _getProfile() {
     // Get a reference to the profiles collection
-    CollectionReference profiles =
-        FirebaseFirestore.instance.collection('profiles');
+    CollectionReference profiles = _firestore.collection('profiles');
 
     // Retrieve the profile document
-    QuerySnapshot snapshot = await profiles.get();
+    Stream<QuerySnapshot> snapshot = profiles.snapshots();
 
-    // Get the first (and only) document in the snapshot
-    DocumentSnapshot profileDoc = snapshot.docs[0];
-
-    print("##### ${profileDoc.get("name")}");
-    print("##### ${profileDoc.get("email")}");
-    print("##### ${profileDoc.get("inBasket.trainings")}");
-    print("##### ${profileDoc.get('inBasket.totalPrice')}");
-
-    return ProfileModel(
-        // photo: AssetImage(ImageRasterPath.avatar1),
-        name: profileDoc.get("name"),
-        email: profileDoc.get("email"),
-        trainings: profileDoc.get('inBasket.trainings'),
-        totalPrice: profileDoc.get('inBasket.totalPrice'));
-
-    // return const ProfileModel(
-    //     // photo: AssetImage(ImageRasterPath.avatar1),
-    //     name: "Spartaz",
-    //     email: "flutterwithgia@gmail.com",
-    //     trainings: ["", "", "", "", "", ""]);
+    return snapshot;
   }
 
   Future<List<TrainingModel>> _getTrainingData() async {
-    final snapshot = await _firestore.collection('Trainings').get();
+    final snapshot = await _firestore.collection('trainings').get();
     final data = snapshot.docs.map((doc) {
       print("#####");
       final docData = doc.data();
