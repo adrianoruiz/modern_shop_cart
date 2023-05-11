@@ -21,25 +21,70 @@ class CartController extends GetxController {
     return snapshot;
   }
 
-  _getTrainingFromCart() {}
-
-  TrainingModel _getTrainingDetails() {
+  Future<List<TrainingModel>> _getTrainingsListById() async {
     final arguments = Get.arguments;
-    final TrainingModel training = (arguments == null)
-        ? TrainingModel(
-            id: "id",
-            title: "title",
-            description: "description",
-            categories: ["categories"],
-            author: "author",
-            duration: "duration",
-            price: 0.0,
-            trailerVid: "trailerVid",
-            image: "image",
-            creationDate: Timestamp(100, 999))
-        : arguments['trainingData'];
-    return training;
+    print(
+        "##### cart_controller.dart => _getTrainingsListById() ::: ${arguments['trainings']}");
+    List<String> trainings = arguments["trainings"];
+
+    print(
+        "##### cart_controller.dart => _getTrainingsListById() ::: ${trainings.runtimeType}");
+
+    List<TrainingModel> trainingModels = [];
+
+    // Access the "training" collection in Firestore
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('training')
+        .where(FieldPath.documentId, whereIn: trainings)
+        .get();
+
+    // Iterate over the query snapshot to create TrainingModel objects
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      TrainingModel trainingModel = TrainingModel(
+        id: documentSnapshot.id,
+        title: data['title'],
+        description: data['description'],
+        categories: List<String>.from(data['categories']),
+        author: data['author'],
+        duration: data['duration'],
+        price: data['price'].toDouble(),
+        trailerVid: data['trailerVid'],
+        image: data['image'],
+        tags: data['tags'] != [] ? List<String>.from(data['tags']) : [],
+        creationDate: data['creationDate'],
+      );
+
+      trainingModels.add(trainingModel);
+    }
+
+    return trainingModels;
   }
+
+  // List<dynamic> _getCartData() {
+  //   final List<String> trainings = arguments["trainings"];
+  //   final double totalPrice = arguments["totalPrice"];
+  //   return [trainings, totalPrice];
+  // }
+
+  // TrainingModel _getTrainingDetails() {
+  //   final TrainingModel training = (arguments == null)
+  //       ? TrainingModel(
+  //           id: "id",
+  //           title: "title",
+  //           description: "description",
+  //           categories: ["categories"],
+  //           author: "author",
+  //           duration: "duration",
+  //           price: 0.0,
+  //           trailerVid: "trailerVid",
+  //           image: "image",
+  //           creationDate: Timestamp(100, 999))
+  //       : arguments['trainingData'];
+  //   return training;
+  // }
 
   ProjectCardData getSelectedProject() {
     return ProjectCardData(

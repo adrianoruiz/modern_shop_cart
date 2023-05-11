@@ -24,7 +24,6 @@ class DashboardController extends GetxController {
   Future<List<TrainingModel>> _getTrainingData() async {
     final snapshot = await _firestore.collection('trainings').get();
     final data = snapshot.docs.map((doc) {
-      print("#####");
       final docData = doc.data();
       return TrainingModel(
         id: doc.id,
@@ -40,7 +39,6 @@ class DashboardController extends GetxController {
         creationDate: docData['creationDate'],
       );
     }).toList();
-    print(data);
     return data;
   }
 

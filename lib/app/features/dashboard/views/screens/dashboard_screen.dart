@@ -260,13 +260,23 @@ class DashboardScreen extends GetView<DashboardController> {
             // Add the profileModel to the list
             profiles.add(profileModel);
           }
+          List<String> castedTrainings = profiles[0].trainings!.cast<String>();
+          print("##### ${castedTrainings}");
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: kSpacing),
             child: ProfilTile(
               data: profiles[0],
               onPressed: () {
-                Get.toNamed(AppPages.cart);
+                // var profiles[0].trainings;
+                print(
+                    "##### dashboard_screen.dart => onPressed() => ProfilTile => _buildProfile() ::: ${profiles[0].trainings}");
+                print(
+                    "##### dashboard_screen.dart => onPressed() => ProfilTile => _buildProfile() ::: ${profiles[0].totalPrice}");
+                Get.toNamed(AppPages.cart, arguments: {
+                  'trainings': castedTrainings,
+                  // "totalPrice": profiles[0].totalPrice
+                });
               },
             ),
           );

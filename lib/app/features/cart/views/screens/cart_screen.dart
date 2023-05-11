@@ -17,8 +17,6 @@ import 'package:project_management/app/shared_components/project_card.dart';
 import 'package:project_management/app/shared_components/search_field.dart';
 import 'package:project_management/app/shared_components/selection_button.dart';
 import 'package:project_management/app/shared_components/today_text.dart';
-import 'package:project_management/app/shared_components/training_card.dart';
-import 'package:project_management/app/shared_components/training_details_card.dart';
 import 'package:project_management/app/utils/helpers/app_helpers.dart';
 
 import 'package:flutter/material.dart';
@@ -64,7 +62,7 @@ class CartScreen extends GetView<CartController> {
             const Divider(),
             _buildProfile(),
             const SizedBox(height: kSpacing * 2),
-            _buildCartTrainings(),
+            _buildInBasketTrainings(),
             const SizedBox(height: kSpacing)
           ]);
         },
@@ -79,7 +77,7 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing * (kIsWeb ? 1 : 2)),
                     _buildHeader(onPressedMenu: () => controller.openDrawer()),
                     const SizedBox(height: kSpacing),
-                    _buildCartTrainings(),
+                    _buildInBasketTrainings(),
                   ],
                 ),
               ),
@@ -117,7 +115,7 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing),
                     _buildHeader(),
                     const SizedBox(height: kSpacing),
-                    _buildCartTrainings(),
+                    _buildInBasketTrainings(),
                   ],
                 ),
               ),
@@ -159,13 +157,13 @@ class CartScreen extends GetView<CartController> {
     );
   }
 
-  Widget _buildCartTrainings({
+  Widget _buildInBasketTrainings({
     int crossAxisCount = 6,
     int crossAxisCellCount = 2,
     // Axis headerAxis = Axis.horizontal,
   }) {
     return FutureBuilder<List<TrainingModel>>(
-      future: controller._getTrainingFromCart(),
+      future: controller._getTrainingsListById(),
       builder:
           (BuildContext context, AsyncSnapshot<List<TrainingModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
