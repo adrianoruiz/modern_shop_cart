@@ -275,7 +275,7 @@ class DashboardScreen extends GetView<DashboardController> {
                     "##### dashboard_screen.dart => onPressed() => ProfilTile => _buildProfile() ::: ${profiles[0].totalPrice}");
                 Get.toNamed(AppPages.cart, arguments: {
                   'trainings': castedTrainings,
-                  // "totalPrice": profiles[0].totalPrice
+                  "totalPrice": profiles[0].totalPrice
                 });
               },
             ),

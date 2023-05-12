@@ -23,18 +23,19 @@ class CartController extends GetxController {
 
   Future<List<TrainingModel>> _getTrainingsListById() async {
     final arguments = Get.arguments;
-    print(
-        "##### cart_controller.dart => _getTrainingsListById() ::: ${arguments['trainings']}");
-    List<String> trainings = arguments["trainings"];
+
+    List<String> trainings = (arguments != null)
+        ? arguments['trainings']
+        : ["RlpSQGQueG820IfImlDs", "S6xzYSHxp2pvo4fbXqj4"];
 
     print(
-        "##### cart_controller.dart => _getTrainingsListById() ::: ${trainings.runtimeType}");
+        "##### cart_controller.dart => _getTrainingsListById() ::: $trainings");
 
     List<TrainingModel> trainingModels = [];
 
     // Access the "training" collection in Firestore
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('training')
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('trainings')
         .where(FieldPath.documentId, whereIn: trainings)
         .get();
 

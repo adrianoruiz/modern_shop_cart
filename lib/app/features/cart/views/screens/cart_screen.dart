@@ -9,6 +9,7 @@ import 'package:project_management/app/config/models/profile_model.dart';
 import 'package:project_management/app/config/models/training_model.dart';
 import 'package:project_management/app/config/routes/app_pages.dart';
 import 'package:project_management/app/constans/app_constants.dart';
+import 'package:project_management/app/features/annimations/animated_switcher_wrapper.dart';
 import 'package:project_management/app/shared_components/cart_training_card.dart';
 import 'package:project_management/app/shared_components/chatting_card.dart';
 import 'package:project_management/app/shared_components/profile_tile.dart';
@@ -62,8 +63,14 @@ class CartScreen extends GetView<CartController> {
             const Divider(),
             _buildProfile(),
             const SizedBox(height: kSpacing * 2),
-            _buildInBasketTrainings(),
-            const SizedBox(height: kSpacing)
+            _buildInBasketTrainings(
+              headerAxis: Axis.vertical,
+              crossAxisCount: 6,
+              crossAxisCellCount: 6,
+            ),
+            const SizedBox(height: kSpacing),
+            bottomBarTitle(),
+            bottomBarButton(),
           ]);
         },
         tabletBuilder: (context, constraints) {
@@ -77,7 +84,17 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing * (kIsWeb ? 1 : 2)),
                     _buildHeader(onPressedMenu: () => controller.openDrawer()),
                     const SizedBox(height: kSpacing),
-                    _buildInBasketTrainings(),
+                    _buildInBasketTrainings(
+                      headerAxis: (constraints.maxWidth < 850)
+                          ? Axis.vertical
+                          : Axis.horizontal,
+                      crossAxisCount: 6,
+                      crossAxisCellCount: (constraints.maxWidth < 950)
+                          ? 6
+                          : (constraints.maxWidth < 1100)
+                              ? 3
+                              : 2,
+                    ),
                   ],
                 ),
               ),
@@ -88,6 +105,8 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing * (kIsWeb ? 0.5 : 1.5)),
                     _buildProfile(),
                     const Divider(thickness: 1),
+                    bottomBarTitle(),
+                    bottomBarButton(),
                     const SizedBox(height: kSpacing),
                   ],
                 ),
@@ -115,7 +134,10 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing),
                     _buildHeader(),
                     const SizedBox(height: kSpacing),
-                    _buildInBasketTrainings(),
+                    _buildInBasketTrainings(
+                      crossAxisCount: 6,
+                      crossAxisCellCount: (constraints.maxWidth < 1360) ? 3 : 2,
+                    ),
                   ],
                 ),
               ),
@@ -126,6 +148,8 @@ class CartScreen extends GetView<CartController> {
                     const SizedBox(height: kSpacing / 2),
                     _buildProfile(),
                     const Divider(thickness: 1),
+                    bottomBarTitle(),
+                    bottomBarButton(),
                     const SizedBox(height: kSpacing),
                   ],
                 ),
@@ -160,7 +184,7 @@ class CartScreen extends GetView<CartController> {
   Widget _buildInBasketTrainings({
     int crossAxisCount = 6,
     int crossAxisCellCount = 2,
-    // Axis headerAxis = Axis.horizontal,
+    Axis headerAxis = Axis.horizontal,
   }) {
     return FutureBuilder<List<TrainingModel>>(
       future: controller._getTrainingsListById(),
@@ -247,6 +271,48 @@ class CartScreen extends GetView<CartController> {
           );
         }
       },
+    );
+  }
+
+  Widget bottomBarTitle() {
+    final arguments = Get.arguments;
+    double total = arguments["totalPrice"];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Total",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+          ),
+          AnimatedSwitcherWrapper(
+            child: Text(
+              "$total DT",
+              style: const TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFFEC6813),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget bottomBarButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(20)),
+          onPressed: () {},
+          child: const Text("Buy Now"),
+        ),
+      ),
     );
   }
 }

@@ -53,7 +53,7 @@ class CartTrainingCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: onPressedTask,
-                    child: const Text("Some Tag"),
+                    child: Text("${data.price.toString()} DT"),
                   ),
                 ],
               ),
@@ -70,7 +70,7 @@ class CartTrainingCard extends StatelessWidget {
             //       ),
             //       const SizedBox(width: kSpacing / 2),
             //       _IconButton(
-            //         iconData: EvaIcons.peopleOutline,
+            //         iconDat  a: EvaIcons.peopleOutline,
             //         onPressed: onPressedContributors,
             //         totalContributors: data.totalContributors,
             //       ),
