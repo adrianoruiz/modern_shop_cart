@@ -42,12 +42,12 @@ class ProjectCard extends StatelessWidget {
             children: [
               _TitleText(data.projectName),
               const SizedBox(height: 5),
-              Row(
-                children: [
-                  const _SubtitleText("Release time : "),
-                  _ReleaseTimeText(data.releaseTime)
-                ],
-              )
+              // Row(
+              //   children: [
+              //     const _SubtitleText("Release time : "),
+              //     _ReleaseTimeText(data.releaseTime)
+              //   ],
+              // )
             ],
           ),
         )
